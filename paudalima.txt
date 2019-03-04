@@ -1,0 +1,128 @@
+# Test of species groups
+
+define DIFCH 0.01
+define DIFCM 5
+define BIRTHRATEH 0.001
+define BIRTHRATEM 0
+define CONGENPROB 0.2
+
+define MINFHU 1
+define MINFHD 1
+define HINFM 1
+define HINFSEX 1
+define RECOVERH 1
+
+define DEATHRATEH 0.001
+define DEATHRATEM 0.1
+define DENGUERATEF 1
+define DENGUERATER 1
+define DEATHRATEZIKA 1
+
+graphics opengl
+
+dim 2
+
+boundaries x 0 1000 r
+boundaries y 0 875 r
+
+species Shu Ihu Rhu # human, not exposed to dengue
+species Shd Ihd Rhd # human, exposed to dengue
+species Sm Im # mosquito
+
+species_group human Shu Ihu Rhu Shd Ihd Rhd
+species_group mosquito Sm Im
+species_group non_dengue Shu Ihu Rhu
+species_group dengue Shd Ihd Rhd
+species_group S_human Shu Shd
+species_group I_human Ihu Ihd
+species_group R_human Rhu Rhd
+
+
+color S_human red
+color I_human green
+color R_human blue
+color Sm orange
+color Im pink
+color D black
+
+difc human DIFCM
+difc mosquito DIFCH
+
+time_start 0
+time_stop 1000
+time_step 0.01
+
+mol 10 Shu 70 50
+
+
+reaction birth_hS Sh? -> Sh? + Shu BIRTHRATEH
+reaction birth_hIS Ih? -> Ih? + Ihu BIRTHRATEH*(1-CONGENPROB)
+reaction birth_hII Ih? -> Ih? + Ihu BIRTHRATEH*CONGENPROB
+reaction birth_hR Rh? -> Rh? + Shu BIRTHRATEH
+reaction birth_m 0 -> Sm BIRTHRATEM # Mosquitos aren't born, they come straight from hell
+
+reaction dengue_expose ?hu <-> ?hd DENGUERATEF DENGUERATER # Dengue is endemic
+reaction m_inf_hu Shu + Im -> Ihu + Im MINFHU # Infection of non-dengue human by mosquito
+reaction m_inf_hd Shd + Im -> Ihd + Im MINFHD # Infection of dengue human by mosquito
+reaction h_inf_m Ih? + Sm -> Ih? + Im HINFM # Infection of mosquito by human (dengue or non-dengue)
+reaction h_inf_h Ih? + Sh? -> Ih? + Ih? HINFSEX # Sexually transmitted infection
+reaction recover_h Ih? -> Rh? RECOVERH # Zika recovery independent of dengue exposure
+
+reaction base_death_h ?h? -> 0 DEATHRATEH # Ashes to ashes, dust to dust
+reaction base_death_m ?m -> 0 DEATHRATEM # nothing of value lost here
+reaction zika_death_h Ih? -> 0 DEATHRATEZIKA # Rest in peace
+
+start_surface box1
+action both human reflect
+panel disk 10 70 5 1 0 d1
+panel cyl 10 70 50 70 5 c1
+neighbours c1 d1
+thickness 1
+end_surface
+
+start_surface box2
+action both human reflect
+panel disk 25 25 7.5 1 1 d2 
+panel cyl 25 25 57.5 57.5 7.5 c2
+neighbours c2 d2
+thickness 1
+end_surface
+
+start_surface box3
+action both human reflect
+panel disk 70 10 5 0 1 d3
+panel cyl 70 10 70 50 5 c3
+neighbours c3 d3
+thickness 1
+end_surface
+
+start_surface box4
+action both human reflect
+panel cyl 50 70 70 50 5 c4
+thickness 1
+end_surface
+
+start_surface walls
+action both all reflect
+color both 0 0 0
+panel rect +x 0 0 100
+panel rect -x 100 0 100
+panel rect +y 0 0 100
+panel rect -y 0 100 100
+end_surface
+
+/*
+start_surface jumpsurface
+action both all jump
+color both blue
+polygon both edge
+panel disk 20.9 50 10 1 0 d1a
+panel disk 45.1 50 10 1 0 d1b
+panel disk 54.9 50 10 -1 0 d2a
+panel disk 55.2 50 10 -1 0 d2b
+jump d1a back <-> d1b front
+jump d2a front <-> d2b back
+end_surface
+*/
+end_file
+
