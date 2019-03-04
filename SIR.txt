@@ -1,0 +1,61 @@
+# Test of species groups
+
+define DIFCH 1
+define DIFCM 5
+define BIRTHRATEH 1
+define BIRTHRATEM 1
+define DEATHRATEH 1
+define DEATHRATEM 1
+define DENGUERATE 1
+define MINFHU 1
+define MINFHD 1
+define HINFM 1
+define HINFSEX 1
+define RECOVERH 1
+define DEATHRATEZIKA 1
+
+graphics opengl
+
+dim 2
+
+boundaries x -50 50 r
+boundaries y -50 50 r
+
+species Shu Ihu Rhu # human, not exposed to dengue
+species Shd Ihd Rhd # human, exposed to dengue
+species Sm Im # mosquito
+
+color Sh? red
+color Ih? green
+color Rh? blue
+color Sm orange
+color Im black
+
+difc ?m DIFCM
+difc ?h? DIFCH
+
+time_start 0
+time_stop 1000
+time_step 0.01
+
+mol 900 Shu u u
+mol 100 Shd u u
+mol 100 Ihu u u
+mol 1000 Sm 0 0
+
+reaction birth_h ?h? -> ?h? + ?hu BIRTHRATEH # Vertical Zika transmission
+reaction birth_m 0 -> Sm BIRTHRATEM # Mosquitos aren't born, they come straight from hell
+
+reaction dengue_expose ?hu <-> ?hd DENGUERATE # Dengue is endemic
+reaction m_inf_hu Shu + Im -> Ihu + Im MINFHU # Infection of non-dengue human by mosquito
+reaction m_inf_hd Shd + Im -> Ihd + Im MINFHD # Infection of dengue human by mosquito
+reaction h_inf_m Ih? + Sm -> Ih? + Im HINFM # Infection of mosquito by human (dengue or non-dengue)
+reaction h_inf_h Ih? + Sh? -> Ih? + Ih? HINFSEX # Sexually transmitted infection
+reaction recover_h Ih? -> Rh? # Zika recovery independent of dengue exposure
+
+reaction base_death_h ?h? -> 0 DEATHRATEH # Ashes to ashes, dust to dust
+reaction base_death_m ?m -> 0 DEATHRATEM # nothing of value lost here
+reaction zika_death_h Ih? -> 0 DEATHRATEZIKA # Rest in peace
+
+end_file
+
