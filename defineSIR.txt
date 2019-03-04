@@ -1,28 +1,3 @@
-# Test of species groups
-
-define DIFCH 1
-define DIFCM 5
-define BIRTHRATEH 1
-define BIRTHRATEM 0.1
-define CONGENPROB 0.2
-define DEATHRATEH 1
-define DEATHRATEM 1
-define DENGUERATEF 1
-define DENGUERATER 1
-define MINFHU 1
-define MINFHD 1
-define HINFM 1
-define HINFSEX 1
-define RECOVERH 1
-define DEATHRATEZIKA 1
-
-graphics opengl
-
-dim 2
-
-boundaries x -50 50 r
-boundaries y -50 50 r
-
 species Shu Ihu Rhu # human, not exposed to dengue
 species Shd Ihd Rhd # human, exposed to dengue
 species Sm Im # mosquito
@@ -44,15 +19,6 @@ color Im black
 difc human DIFCM
 difc mosquito DIFCH
 
-time_start 0
-time_stop 1000
-time_step 0.01
-
-mol 90 Shu u u
-mol 10 Shd u u
-mol 10 Ihu u u
-mol 10 Sm 0 0
-
 reaction birth_hS Sh? -> Sh? + Shu BIRTHRATEH
 reaction birth_hIS Ih? -> Ih? + Ihu BIRTHRATEH*(1-CONGENPROB)
 reaction birth_hII Ih? -> Ih? + Ihu BIRTHRATEH*CONGENPROB
@@ -66,9 +32,8 @@ reaction h_inf_m Ih? + Sm -> Ih? + Im HINFM # Infection of mosquito by human (de
 reaction h_inf_h Ih? + Sh? -> Ih? + Ih? HINFSEX # Sexually transmitted infection
 reaction recover_h Ih? -> Rh? RECOVERH # Zika recovery independent of dengue exposure
 
-reaction base_death_h ?h? -> 0 DEATHRATEH # Ashes to ashes, dust to dust
-reaction base_death_m ?m -> 0 DEATHRATEM # nothing of value lost here
-reaction zika_death_h Ih? -> 0 DEATHRATEZIKA # Rest in peace
+reaction base_death_h human -> 0 DEATHRATEH # Ashes to ashes, dust to dust
+reaction base_death_m mosquito -> 0 DEATHRATEM # nothing of value lost here
+reaction zika_death_h I_human -> 0 DEATHRATEZIKA # Rest in peace
 
 end_file
-

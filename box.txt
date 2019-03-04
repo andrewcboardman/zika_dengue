@@ -1,0 +1,38 @@
+# Test of species groups
+
+define_global DIFCH 1
+define_global DIFCM 5
+define_global BIRTHRATEH 0.00001
+define_global BIRTHRATEM 0.1
+define_global CONGENPROB 0.2
+
+define_global MINFHU 1
+define_global MINFHD 1
+define_global HINFM 1
+define_global HINFSEX 1
+define_global RECOVERH 1
+
+define_global DEATHRATEH 1
+define_global DEATHRATEM 1
+define_global DENGUERATEF 1
+define_global DENGUERATER 1
+define_global DEATHRATEZIKA 1
+
+graphics opengl
+
+dim 2
+boundaries x 0 100 r
+boundaries y 0 100 r
+read_file defineSIR.txt
+
+time_start 0
+time_stop 1000
+time_step 0.01
+
+mol 90 Shu u u
+mol 10 Shd u u
+mol 10 Ihu u u
+mol 10 Sm 0 0
+
+end_file
+

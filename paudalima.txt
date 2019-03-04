@@ -1,52 +1,30 @@
-# Test of species groups
 
-define DIFCH 0.01
-define DIFCM 5
-define BIRTHRATEH 0.001
-define BIRTHRATEM 0
-define CONGENPROB 0.2
+define_global DIFCH 1
+define_global DIFCM 5
+define_global BIRTHRATEH 0.00001
+define_global BIRTHRATEM 0
+define_global CONGENPROB 0.2
 
-define MINFHU 1
-define MINFHD 1
-define HINFM 1
-define HINFSEX 1
-define RECOVERH 1
+define_global MINFHU 1
+define_global MINFHD 1
+define_global HINFM 1
+define_global HINFSEX 1
+define_global RECOVERH 1
 
-define DEATHRATEH 0.001
-define DEATHRATEM 0.1
-define DENGUERATEF 1
-define DENGUERATER 1
-define DEATHRATEZIKA 1
+define_global DEATHRATEH 1
+define_global DEATHRATEM 1
+define_global DENGUERATEF 1
+define_global DENGUERATER 1
+define_global DEATHRATEZIKA 1
 
 graphics opengl
 
 dim 2
 
-boundaries x 0 1000 r
-boundaries y 0 875 r
+read_file defineSIR.txt
 
-species Shu Ihu Rhu # human, not exposed to dengue
-species Shd Ihd Rhd # human, exposed to dengue
-species Sm Im # mosquito
-
-species_group human Shu Ihu Rhu Shd Ihd Rhd
-species_group mosquito Sm Im
-species_group non_dengue Shu Ihu Rhu
-species_group dengue Shd Ihd Rhd
-species_group S_human Shu Shd
-species_group I_human Ihu Ihd
-species_group R_human Rhu Rhd
-
-
-color S_human red
-color I_human green
-color R_human blue
-color Sm orange
-color Im pink
-color D black
-
-difc human DIFCM
-difc mosquito DIFCH
+boundaries x 0 100 r
+boundaries y 0 100 r
 
 time_start 0
 time_stop 1000
@@ -54,64 +32,44 @@ time_step 0.01
 
 mol 10 Shu 70 50
 
-
-reaction birth_hS Sh? -> Sh? + Shu BIRTHRATEH
-reaction birth_hIS Ih? -> Ih? + Ihu BIRTHRATEH*(1-CONGENPROB)
-reaction birth_hII Ih? -> Ih? + Ihu BIRTHRATEH*CONGENPROB
-reaction birth_hR Rh? -> Rh? + Shu BIRTHRATEH
-reaction birth_m 0 -> Sm BIRTHRATEM # Mosquitos aren't born, they come straight from hell
-
-reaction dengue_expose ?hu <-> ?hd DENGUERATEF DENGUERATER # Dengue is endemic
-reaction m_inf_hu Shu + Im -> Ihu + Im MINFHU # Infection of non-dengue human by mosquito
-reaction m_inf_hd Shd + Im -> Ihd + Im MINFHD # Infection of dengue human by mosquito
-reaction h_inf_m Ih? + Sm -> Ih? + Im HINFM # Infection of mosquito by human (dengue or non-dengue)
-reaction h_inf_h Ih? + Sh? -> Ih? + Ih? HINFSEX # Sexually transmitted infection
-reaction recover_h Ih? -> Rh? RECOVERH # Zika recovery independent of dengue exposure
-
-reaction base_death_h ?h? -> 0 DEATHRATEH # Ashes to ashes, dust to dust
-reaction base_death_m ?m -> 0 DEATHRATEM # nothing of value lost here
-reaction zika_death_h Ih? -> 0 DEATHRATEZIKA # Rest in peace
-
-start_surface box1
+start_surface town
 action both human reflect
-panel disk 10 70 5 1 0 d1
-panel cyl 10 70 50 70 5 c1
-neighbours c1 d1
+panel disk 34.25 91.5 34.25 0 1 d1 
+panel disk 28 71.5 28 0 1 d2
+panel cyl 34.25 71.5 34.25 91.5 34.25 c2
+panel disk 30 59.75 11.75 1 0 d3
+panel disk 49.25 48 19.25 0 1 d4
+panel disk 68.5 28.75 28.75 1 0 d5
+panel cyl 68.5 35.75 87.0 35.75 35.75 c3
+panel disk 87.0 35.75 35.75 1 0 d6
+neighbours d1 d2 c2 d3 d4 d5 c3 d6
 thickness 1
 end_surface
 
+/*
 start_surface box2
 action both human reflect
-panel disk 25 25 7.5 1 1 d2 
-panel cyl 25 25 57.5 57.5 7.5 c2
-neighbours c2 d2
+panel cyl 100 750 600 750 50 c2
 thickness 1
 end_surface
 
 start_surface box3
 action both human reflect
-panel disk 70 10 5 0 1 d3
-panel cyl 70 10 70 50 5 c3
-neighbours c3 d3
-thickness 1
-end_surface
-
-start_surface box4
-action both human reflect
-panel cyl 50 70 70 50 5 c4
+panel disk 700 700 140 1 1 d3
+panel disk 650 650 90 1 1 d4
 thickness 1
 end_surface
 
 start_surface walls
 action both all reflect
 color both 0 0 0
-panel rect +x 0 0 100
-panel rect -x 100 0 100
-panel rect +y 0 0 100
-panel rect -y 0 100 100
+panel rect +x 0 0 1000
+panel rect -x 1000 0 1000
+panel rect +y 0 0 1000
+panel rect -y 0 1000 1000
 end_surface
 
-/*
+
 start_surface jumpsurface
 action both all jump
 color both blue
