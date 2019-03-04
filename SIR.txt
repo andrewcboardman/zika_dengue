@@ -3,10 +3,12 @@
 define DIFCH 1
 define DIFCM 5
 define BIRTHRATEH 1
-define BIRTHRATEM 1
+define BIRTHRATEM 0.1
+define CONGENPROB 0.2
 define DEATHRATEH 1
 define DEATHRATEM 1
-define DENGUERATE 1
+define DENGUERATEF 1
+define DENGUERATER 1
 define MINFHU 1
 define MINFHD 1
 define HINFM 1
@@ -25,33 +27,44 @@ species Shu Ihu Rhu # human, not exposed to dengue
 species Shd Ihd Rhd # human, exposed to dengue
 species Sm Im # mosquito
 
-color Sh? red
-color Ih? green
-color Rh? blue
+species_group human Shu Ihu Rhu Shd Ihd Rhd
+species_group mosquito Sm Im
+species_group non_dengue Shu Ihu Rhu
+species_group dengue Shd Ihd Rhd
+species_group S_human Shu Shd
+species_group I_human Ihu Ihd
+species_group R_human Rhu Rhd
+
+color S_human red
+color I_human green
+color R_human blue
 color Sm orange
 color Im black
 
-difc ?m DIFCM
-difc ?h? DIFCH
+difc human DIFCM
+difc mosquito DIFCH
 
 time_start 0
 time_stop 1000
 time_step 0.01
 
-mol 900 Shu u u
-mol 100 Shd u u
-mol 100 Ihu u u
-mol 1000 Sm 0 0
+mol 90 Shu u u
+mol 10 Shd u u
+mol 10 Ihu u u
+mol 10 Sm 0 0
 
-reaction birth_h ?h? -> ?h? + ?hu BIRTHRATEH # Vertical Zika transmission
+reaction birth_hS Sh? -> Sh? + Shu BIRTHRATEH
+reaction birth_hIS Ih? -> Ih? + Ihu BIRTHRATEH*(1-CONGENPROB)
+reaction birth_hII Ih? -> Ih? + Ihu BIRTHRATEH*CONGENPROB
+reaction birth_hR Rh? -> Rh? + Shu BIRTHRATEH
 reaction birth_m 0 -> Sm BIRTHRATEM # Mosquitos aren't born, they come straight from hell
 
-reaction dengue_expose ?hu <-> ?hd DENGUERATE # Dengue is endemic
+reaction dengue_expose ?hu <-> ?hd DENGUERATEF DENGUERATER # Dengue is endemic
 reaction m_inf_hu Shu + Im -> Ihu + Im MINFHU # Infection of non-dengue human by mosquito
 reaction m_inf_hd Shd + Im -> Ihd + Im MINFHD # Infection of dengue human by mosquito
 reaction h_inf_m Ih? + Sm -> Ih? + Im HINFM # Infection of mosquito by human (dengue or non-dengue)
 reaction h_inf_h Ih? + Sh? -> Ih? + Ih? HINFSEX # Sexually transmitted infection
-reaction recover_h Ih? -> Rh? # Zika recovery independent of dengue exposure
+reaction recover_h Ih? -> Rh? RECOVERH # Zika recovery independent of dengue exposure
 
 reaction base_death_h ?h? -> 0 DEATHRATEH # Ashes to ashes, dust to dust
 reaction base_death_m ?m -> 0 DEATHRATEM # nothing of value lost here
