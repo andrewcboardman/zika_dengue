@@ -1,7 +1,8 @@
 species Shu Ihu Rhu # human, not exposed to dengue
 species Shd Ihd Rhd # human, exposed to dengue
 species D # placeholder to count zika deaths
-species Sm Im # mosquito
+species Sm_AA Sm_Aa Sm_aa Im_AA Sm_Aa # mosquito
+species P # pesticide
 
 species_group human Shu Ihu Rhu Shd Ihd Rhd
 species_group mosquito Sm Im
@@ -26,7 +27,17 @@ reaction birth_hS Sh? -> Sh? + Shu BIRTHRATEH
 reaction birth_hIS Ih? -> Ih? + Shu BIRTHRATEH*(1-CONGENPROB)
 reaction birth_hII Ih? -> Ih? + Ihu BIRTHRATEH*CONGENPROB
 reaction birth_hR Rh? -> Rh? + Shu BIRTHRATEH
-reaction birth_m 0 -> Sm BIRTHRATEM # Mosquitos aren't born, they come straight from hell
+
+reaction birth_m Sm_AA + Sm_Aa -> Sm_AA + Sm_Aa + Sm_AA 0.5*BIRTHRATEM 
+reaction birth_m Sm_AA + Sm_Aa -> Sm_AA + Sm_Aa + Sm_Aa 0.5*BIRTHRATEM
+reaction birth_m Sm_AA + Sm_aa -> Sm_AA + Sm_aa + Sm_Aa BIRTHRATEM
+reaction birth_m Sm_aa + Sm_Aa -> Sm_aa + Sm_Aa + Sm_Aa 0.5*BIRTHRATEM
+reaction birth_m Sm_aa + Sm_Aa -> Sm_aa + Sm_Aa + Sm_aa 0.5*BIRTHRATEM
+reaction birth_m Sm_Aa + Sm_Aa -> Sm_Aa + Sm_Aa + Sm_aa 0.25*BIRTHRATEM
+reaction birth_m Sm_Aa + Sm_Aa -> Sm_aa + Sm_Aa + Sm_AA 0.25*BIRTHRATEM
+reaction birth_m Sm_Aa + Sm_Aa -> Sm_Aa + Sm_Aa + Sm_Aa 0.5*BIRTHRATEM
+reaction birth_m Sm_AA + Sm_AA -> Sm_AA + Sm_AA + Sm_AA BIRTHRATEM
+reaction birth_m Sm_aa + Sm_aa -> Sm_aa + Sm_aa + Sm_aa BIRTHRATEM
 
 reaction dengue_expose ?hu <-> ?hd DENGUERATEF DENGUERATER # Dengue is endemic
 reaction m_inf_hu Shu + Im -> Ihu + Im MINFHU*BITERATE # Infection of non-dengue human by mosquito
@@ -38,5 +49,6 @@ reaction recover_h Ih? -> Rh? RECOVERH # Zika recovery independent of dengue exp
 reaction base_death_h human -> 0 DEATHRATEH # Ashes to ashes, dust to dust
 reaction base_death_m mosquito -> 0 DEATHRATEM # nothing of value lost here
 reaction zika_death_h I_human -> D DEATHRATEZIKA # Rest in peace
+reaction moz_kill ?m + P -> P PESTKILLRATE # kill that insect
 
 end_file

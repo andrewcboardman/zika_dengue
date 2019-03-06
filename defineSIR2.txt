@@ -1,0 +1,32 @@
+species SSh ISh RSh # human 
+species SIh IIh RIh
+species SRh IRh RRh 
+species SSm ISm # mosquito
+species SIm IIm
+
+species_group human SSh ISh RSh SIh IIh RIh SRh IRh RRh 
+species_group mosquito SSm ISm SIm IIm
+
+difc human DIFCM
+difc mosquito DIFCH
+
+reaction birth_hS S?h -> S?h + SSh BIRTHRATEH
+reaction birth_hIS I?h -> I?h + SSh BIRTHRATEH*(1-CONGENPROB)
+reaction birth_hII I?h -> I?h + ISh BIRTHRATEH*CONGENPROB
+reaction birth_hR R?h -> R?h + SSh BIRTHRATEH
+reaction birth_m 0 -> SSm BIRTHRATEM # Mosquitos aren't born, they come straight from hell
+
+reaction z_m_inf_h SSh + I?m -> ISh + I?m MINFHU # Human Zika infection without exposure to dengue
+reaction z_m_inf_h S{I|R}h + I?m -> I{S|I}h + I?m MINFHD # Human Zika infection post-dengue exposure
+reaction z_h_inf_m I?h + S?m -> I?h + I?m HINFM # Mosquito Zika infection
+reaction z_h_inf_h I?h + S?h -> I?h + I?h HINFSEX # Sexually transmitted Zika infection
+reaction z_recover I?h -> R?h RECOVERH # Zika recovery
+reaction d_m_inf_h ?Sh + ?Im -> ?Ih + ?Im 1
+reaction d_h_inf_m ?Ih + ?Sm -> ?Sh + ?Im 1
+reaction d_recover ?Ih -> ?Rh 1
+
+reaction base_death_h human -> 0 DEATHRATEH # Ashes to ashes, dust to dust
+reaction base_death_m mosquito -> 0 DEATHRATEM # nothing of value lost here
+reaction zika_death_h I?h -> 0 DEATHRATEZIKA # Rest in peace
+
+end_file
