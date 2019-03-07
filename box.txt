@@ -1,4 +1,6 @@
-# Test of species groups
+# Test of mass action
+
+define SIMNUM 0
 
 graphics opengl
 
@@ -11,15 +13,14 @@ time_start 0
 time_stop 1000
 time_step 0.01
 
-mol 14000 Shu u u
-mol 10 Shd u u
-mol 10 Ihu u u
-mol 10 Sm 0 0
+
+mol 100 Shu u u 
+mol 200 Shd u u
+mol 100 Im u u 
+
 
 output_files box_count.txt
 cmd n 100 molcount box_count.txt
-
-output
 
 end_file
 

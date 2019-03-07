@@ -1,67 +1,34 @@
-
-define_global DIFCH 1
-define_global DIFCM 5
-define_global BIRTHRATEH 0.00001
-define_global BIRTHRATEM 0
-define_global CONGENPROB 0.2
-
-define_global MINFHU 1
-define_global MINFHD 1
-define_global HINFM 1
-define_global HINFSEX 1
-define_global RECOVERH 1
-
-define_global DEATHRATEH 1
-define_global DEATHRATEM 1
-define_global DENGUERATEF 1
-define_global DENGUERATER 1
-define_global DEATHRATEZIKA 1
-
 graphics opengl
 
 dim 2
 
-read_file defineSIR.txt
+read_file defineSIRbasic.txt
 
-boundaries x 0 100 r
-boundaries y 0 100 r
+boundaries x 0 1000 r
+boundaries y 0 1000 r
 
 time_start 0
-time_stop 1000
+time_stop 100
 time_step 0.01
 
-mol 10 Shu 70 50
+mol 1400 Sm u u 
 
-start_surface town
-action both human reflect
-panel disk 34.25 91.5 34.25 0 1 d1 
-panel disk 28 71.5 28 0 1 d2
-panel cyl 34.25 71.5 34.25 91.5 34.25 c2
-panel disk 30 59.75 11.75 1 0 d3
-panel disk 49.25 48 19.25 0 1 d4
-panel disk 68.5 28.75 28.75 1 0 d5
-panel cyl 68.5 35.75 87.0 35.75 35.75 c3
-panel disk 87.0 35.75 35.75 1 0 d6
+start_surface hills
+action both all reflect
+panel disk 342.5 915 342.5 0 1 d1 
+panel disk 280 715 280 0 1 d2
+panel cyl 342.5 715 342.5 915 342.5 c2
+panel disk 300 597.5 117.5 1 0 d3
+panel disk 492.5 480 192.5 0 1 d4
+panel disk 685 287.5 287.5 1 0 d5
+panel cyl 685 357.5 870 357.5 357.5 c3
+panel disk 870 357.5 357.5 1 0 d6
 neighbours d1 d2 c2 d3 d4 d5 c3 d6
 thickness 1
 end_surface
 
-/*
-start_surface box2
-action both human reflect
-panel cyl 100 750 600 750 50 c2
-thickness 1
-end_surface
-
-start_surface box3
-action both human reflect
-panel disk 700 700 140 1 1 d3
-panel disk 650 650 90 1 1 d4
-thickness 1
-end_surface
-
 start_surface walls
-action both all reflect
+action both human reflect
 color both 0 0 0
 panel rect +x 0 0 1000
 panel rect -x 1000 0 1000
@@ -69,18 +36,13 @@ panel rect +y 0 0 1000
 panel rect -y 0 1000 1000
 end_surface
 
+start_compartment valley
+surface hills 
+point 50 800
+end_compartment
 
-start_surface jumpsurface
-action both all jump
-color both blue
-polygon both edge
-panel disk 20.9 50 10 1 0 d1a
-panel disk 45.1 50 10 1 0 d1b
-panel disk 54.9 50 10 -1 0 d2a
-panel disk 55.2 50 10 -1 0 d2b
-jump d1a back <-> d1b front
-jump d2a front <-> d2b back
-end_surface
-*/
+#output_files pdl_count.txt
+#cmd n 100 molcount pdl_count.txt
+
 end_file
 

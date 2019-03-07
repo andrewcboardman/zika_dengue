@@ -1,11 +1,19 @@
-define BIRTHRATEM = 0.05 # Rate of mosquito births
-define DEATHRATEM = 0.05 # Rate of mosquito deaths
-define MINFH = 0.4 # Prob. biting mosquito will infect human
-define HINFM = 0.5 # Prob. biting mostquito will be infected
-define HINFH = 0.01 # Rate of sexual transmission (includes sex rate)
-define BITERATE = 1 # Rate of mosquito bites
-define DPROTECT = 1 # Protection factor offered by dengue
-define HRECOVER = 1 # Human recovery rate
+define DIFCH 0.1 #
+define DIFCM 2 
+define BIRTHRATEM 0.005 # Rate of mosquito births (net rate = death rate)
+define DEATHRATEM 0.05 # Rate of mosquito deaths (0.03 - 0.07 per mosquito per day)
+define MINFH 0.4 # Prob. biting mosquito will infect human
+define HINFM 0.5 # Prob. biting mostquito will be infected
+define HINFH 0.01 # Rate of sexual transmission (includes sex rate)
+define BITERATE 0.5 # Rate of mosquito bites
+define DPROTECT 0.02 # Protection factor offered by dengue
+define HRECOVER 0.05 # Human recovery rate
+
+variable rate_fwd_u MINFH*BITERATE
+variable rate_fwd_d MINFH*BITERATE*DPROTECT
+variable rate_rev HINFM*BITERATE
+variable rate_sex_d HINFH*DPROTECT
+
 
 species Shu Shd Ih Rh # human, non-dengue-exposed and dengue-exposed
 species D # placeholder to count zika deaths
@@ -13,28 +21,25 @@ species Sm Im # mosquito
 
 species_group human Shu Shd Ih Rh 
 species_group mosquito Sm Im
-species_group S_human Shu Shd
 
-color S_human red
+color Shu red
+color Shd pink
 color Ih green
 color Rh blue
 color Sm orange
 color Im black
 
-difc human DIFCM
-difc mosquito DIFCH
+difc human DIFCH
+difc mosquito DIFCM
 difc D 0
 
 reaction birth_m 0 -> Sm BIRTHRATEM # Mosquitos aren't born, they come straight from hell
-reaction base_death_m mosquito -> 0 DEATHRATEM # nothing of value lost here
-
-reaction m_inf_hu Shu + Im -> Ihu + Im MINFH*BITERATE # Infection of non-dengue human by mosquito
-reaction m_inf_hd Shd + Im -> Ihd + Im MINFH*BITERATE*DENGUEPROTECT # Infection of dengue human by mosquito
-reaction h_inf_m Ih? + Sm -> Ih? + Im HINFM*BITERATE # Infection of mosquito by human (dengue or non-dengue)
-reaction h_inf_hu Ih? + Shu -> Ih? + Ihu HINFH # Sexually transmitted infection 
-reaction h_inf_hd Ih? + Shd -> Ih? + Ihd HINFH*DPROTECT
-reaction recover_h Ih? -> Rh? HRECOVER # Zika recovery independent of dengue exposure
-
-
+reaction base_death_m ?m -> 0 DEATHRATEM # nothing of value lost here
+reaction m_inf_hu Shu + Im -> Ih + Im rate_fwd_u # Infection of non-dengue human by mosquito
+reaction m_inf_hd Shd + Im -> Ih + Im rate_fwd_d # Infection of dengue human by mosquito
+reaction h_inf_m Ih + Sm -> Ih + Im rate_rev # Infection of mosquito by human (dengue or non-dengue)
+reaction h_inf_hu Ih + Shu -> Ih + Ih HINFH # Sexually transmitted infection 
+reaction h_inf_hd Ih + Shd -> Ih + Ih rate_sex_d 
+reaction recover_h Ih -> Rh HRECOVER # Zika recovery independent of dengue exposure
 
 end_file
